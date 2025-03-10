@@ -4,13 +4,15 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "lldb",
             "request": "launch",
             "name": "Launch C Program",
             "program": "${FLASHCARD_THING}/<Flashcard_thing.c>",
             "args": [],
-            "cwd": "${FLASHCARD_THING}"
+            "cwd": "${FLASHCARD_THING}",
+            "preLaunchTask": "build"
         },
 
         {
@@ -22,6 +24,7 @@
             "cwd": "${FLASHCARD_THING}",
             "preLaunchTask": "build"
         }
+
         
     ]
 }

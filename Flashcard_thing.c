@@ -5,7 +5,7 @@ char question[64];
 char answr[64]; 
 char usransw;
 int i = 0; //Preserves the variable i so it can be used throughout the code. 
-
+int score = 0;
 
 
 // takes questions from file
@@ -36,11 +36,7 @@ char getinpt(FILE *file)
    return 1;
 }
 
-// store questions and match them to answers
-
 // give questions to user
-
-// compare users answer to question answer
 
 // if true mark as learned
 
@@ -60,6 +56,19 @@ int main()
     getinpt(file);
 
     printf("question: %s", question);
+
+    scanf("%s", &usransw);
+
+    if (strcomp(answr, usransw) == 0)
+    {
+        printf("Correct\n");
+        score++; 
+    }
+    else
+    {
+        printf("Incorrect\n");
+        // mark as incorrect somehow
+    }
 
     printf("answer: %s", answr);
 

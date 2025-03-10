@@ -4,7 +4,7 @@
 char question[64];
 char answr[64]; 
 char usransw;
-int i = 0;
+int i = 0; //Preserves the variable i so it can be used throughout the code. 
 
 
 
@@ -13,8 +13,6 @@ char getinpt(FILE *file)
 {
 
     char fout[64];
-
-  
 
     do {
        fgets(fout, 64, file);
@@ -34,9 +32,6 @@ char getinpt(FILE *file)
         }
     i++;      
     } while( i <=20 );
-    
-  
-   
 
    return 1;
 }

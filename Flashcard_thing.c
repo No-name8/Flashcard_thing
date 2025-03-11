@@ -10,19 +10,19 @@ int numquestions;
 int t = 0;
 
 // takes questions from file
-char getinpt(FILE *file)
+/*char getinpt(FILE *file)
 {
 
-    char fout[64];
-
-    do {
-       fgets(fout, 64, file);
-
-        if (i % 2)
-        {
-        strcpy(answr, fout);
-        } 
-        else
+  //  char fout[64];
+//
+  //  do {
+    //   fgets(fout, 64, file);
+//
+  //      if (i % 2)
+    //    {
+      //  strcpy(answr, fout);
+      //  } 
+      //  else
         {
         strcpy(question, fout);
         }
@@ -36,6 +36,7 @@ char getinpt(FILE *file)
 
    return 1;
 }
+*/
 
 // give questions to user
 
@@ -48,7 +49,7 @@ int main()
     printf("welcome to Flashcard Thing\n");
     printf("How many questions would you like to answer?\n");
     scanf("%d", &numquestions);
-    FILE *file = fopen("name.txt", "r");
+    //FILE *file = fopen("name.txt", "r");
    if ((file == NULL)) 
    {
     perror("FILE does not exist"); 

@@ -7,6 +7,7 @@ char usransw[64];
 int i = 0; //Preserves the variable i so it can be used throughout the code. 
 int score = 0;
 int numquestions;
+int t = 0;
 
 // takes questions from file
 char getinpt(FILE *file)
@@ -31,7 +32,7 @@ char getinpt(FILE *file)
             break;
         }
     i++;      
-    } while( i <=20 );
+    } while( i <= 20 );
 
    return 1;
 }
@@ -53,7 +54,7 @@ int main()
     perror("FILE does not exist"); 
     return 1;
    }
-    while (1)
+    while (t <= numquestions)
     {
         
     getinpt(file);
@@ -75,7 +76,7 @@ int main()
         score--;
 
     }
-    if {score == 20}
+    if { t == numquestions }
     {
         printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
         printf("Would you like to play again? (y/n)\n");

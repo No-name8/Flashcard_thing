@@ -3,10 +3,10 @@
 
 char question[64];
 char answr[64]; 
-char usransw;
+char usransw[64];
 int i = 0; //Preserves the variable i so it can be used throughout the code. 
 int score = 0;
-
+int numquestions;
 
 // takes questions from file
 char getinpt(FILE *file)
@@ -44,7 +44,10 @@ char getinpt(FILE *file)
 
 int main()
 {
-     FILE *file = fopen("name.txt", "r");
+    printf("welcome to Flashcard Thing\n");
+    printf("How many questions would you like to answer?\n");
+    scanf("%d", &numquestions);
+    FILE *file = fopen("name.txt", "r");
    if ((file == NULL)) 
    {
     perror("FILE does not exist"); 
@@ -59,7 +62,7 @@ int main()
 
     scanf("%s", &usransw);
 
-    if (strcomp(answr, usransw) == 0)
+    if (strcmp(answr, usransw) == 0)
     {
         printf("Correct\n");
         score++; 
@@ -69,8 +72,13 @@ int main()
         printf("Incorrect\n");
         // mark as incorrect somehow       
         printf("answer: %s", answr);
-    }
+        score--;
 
+    }
+    if {score == 20}
+    {
+        printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
+    }
     }
     
     return 1;

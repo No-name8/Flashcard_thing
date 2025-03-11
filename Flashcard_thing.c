@@ -57,25 +57,25 @@ int main()
     while (t <= numquestions)
     {
         
-    getinpt(file);
+        getinpt(file);
 
-    printf("question: %s", question);
+        printf("question: %s", question);
 
-    scanf("%s", &usransw);
+        scanf("%s", &usransw);
 
-        if (strcmp(answr, usransw) == 0)
-        {
-            printf("Correct\n");
-            score++; 
-        }
-        else
-        {
-            printf("Incorrect\n");
-            // mark as incorrect somehow       
-            printf("answer: %s", answr);
-            score--;
+            if (strcmp(answr, usransw) == 0)
+            {
+                printf("Correct\n");
+                score++; 
+            }
+            else
+            {
+                printf("Incorrect\n");
+                // mark as incorrect somehow       
+                printf("answer: %s", answr);
+                score--;
 
-        }
+            }
     if { t == numquestions }
         {
             printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);

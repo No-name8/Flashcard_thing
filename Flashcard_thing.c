@@ -3,23 +3,22 @@
 
 char question[64];
 char answr[64]; 
-char usransw;
-int i = 0;
-
-
+char usransw[64];
+int i = 0; //Preserves the variable i so it can be used throughout the code. 
+int score = 0;
+int numquestions;
+int t = 0;
 
 // takes questions from file
 char getinpt(FILE *file)
 {
 
-    char fout[64];
+  char fout[64];
 
-  
+      do {
+        fgets(fout, 64, file);
 
-    do {
-       fgets(fout, 64, file);
-
-        if(i % 2)
+        if (i % 2)
         {
         strcpy(answr, fout);
         } 
@@ -33,19 +32,13 @@ char getinpt(FILE *file)
             break;
         }
     i++;      
-    } while( i <=20 );
-    
-  
-   
+    } while( i <= numquestions);
 
    return 1;
 }
 
-// store questions and match them to answers
 
 // give questions to user
-
-// compare users answer to question answer
 
 // if true mark as learned
 
@@ -53,21 +46,56 @@ char getinpt(FILE *file)
 
 int main()
 {
-     FILE *file = fopen("name.txt", "r");
+    printf("welcome to Flashcard Thing\n");
+    printf("How many questions would you like to answer?\n");
+    scanf("%d", &numquestions);
+    FILE *file = fopen("name.txt", "r");
    if ((file == NULL)) 
    {
     perror("FILE does not exist"); 
     return 1;
    }
-    while (1)
+    while (t <= numquestions)
     {
-        
-    getinpt(file);
+        if (t == NULL)
+        {
+            pritnf("test");
+            break;
+        }
+        getinpt(file);
 
-    printf("question: %s", question);
+        printf("question: %s", question);
 
-    printf("answer: %s", answr);
+        scanf("%s", &usransw);
 
+            if (strcmp(answr, usransw) == 0)
+            {
+                printf("Correct\n");
+                score++; 
+            }
+            else
+            {
+                printf("Incorrect\n");
+                // mark as incorrect somehow       
+                printf("answer: %s", answr);
+                score--;
+
+            }
+    if { t == numquestions }
+        {
+            printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
+            printf("Would you like to play again? (y/n)\n");
+            char playagain;
+            scanf("%c", &playagain);
+            if (playagain == "y")
+            {
+                score = 0;
+            }
+            else
+            {
+            break;
+            }        
+        }
     }
     
     return 1;

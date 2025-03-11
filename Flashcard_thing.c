@@ -67,10 +67,9 @@ int main()
     else
     {
         printf("Incorrect\n");
-        // mark as incorrect somehow
+        // mark as incorrect somehow       
+        printf("answer: %s", answr);
     }
-
-    printf("answer: %s", answr);
 
     }
     

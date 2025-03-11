@@ -18,7 +18,7 @@ char getinpt(FILE *file)
     do {
        fgets(fout, 64, file);
 
-        if(i % 2)
+        if (i % 2)
         {
         strcpy(answr, fout);
         } 
@@ -32,7 +32,7 @@ char getinpt(FILE *file)
             break;
         }
     i++;      
-    } while( i <= 20 );
+    } while( i <= numquestions);
 
    return 1;
 }
@@ -63,34 +63,34 @@ int main()
 
     scanf("%s", &usransw);
 
-    if (strcmp(answr, usransw) == 0)
-    {
-        printf("Correct\n");
-        score++; 
-    }
-    else
-    {
-        printf("Incorrect\n");
-        // mark as incorrect somehow       
-        printf("answer: %s", answr);
-        score--;
-
-    }
-    if { t == numquestions }
-    {
-        printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
-        printf("Would you like to play again? (y/n)\n");
-        char playagain;
-        scanf("%c", &playagain);
-        if (playagain == "y")
+        if (strcmp(answr, usransw) == 0)
         {
-            score = 0;
+            printf("Correct\n");
+            score++; 
         }
         else
         {
+            printf("Incorrect\n");
+            // mark as incorrect somehow       
+            printf("answer: %s", answr);
+            score--;
+
+        }
+    if { t == numquestions }
+        {
+            printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
+            printf("Would you like to play again? (y/n)\n");
+            char playagain;
+            scanf("%c", &playagain);
+            if (playagain == "y")
+            {
+                score = 0;
+            }
+            else
+            {
             break;
-        }        
-    }
+            }        
+        }
     }
     
     return 1;

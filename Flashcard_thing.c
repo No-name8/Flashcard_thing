@@ -78,6 +78,17 @@ int main()
     if {score == 20}
     {
         printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
+        printf("Would you like to play again? (y/n)\n");
+        char playagain;
+        scanf("%c", &playagain);
+        if (playagain == "y")
+        {
+            score = 0;
+        }
+        else
+        {
+            break;
+        }        
     }
     }
     

@@ -82,7 +82,7 @@ int main()
             printf("Would you like to play again? (y/n)\n");
             char playagain;
             scanf("%c", &playagain);
-            if ( strcmp(playagain,"y") ==0)
+            if ( strcmp(playagain, "y") ==0)
             {
                 score = 0;
             }

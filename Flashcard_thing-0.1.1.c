@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 char question[64];
 char answr[64]; 
@@ -57,7 +58,8 @@ int main()
     perror("FILE does not exist"); 
     exit (27); 
    } 
-        
+    while (i < numquestions)
+    {
     getinpt(file);
 
     printf("question: %s", question);
@@ -80,17 +82,16 @@ int main()
     {
         printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
         printf("Would you like to play again? (y/n)\n");
-        char playagain;
+        char playagain[2];
         scanf("%c", &playagain);
-        if (playagain == "y")
+        if ((playagain == "y"))
         {
             score = 0;
         }
         else
         {
-            return 0; 
+            return 1; 
         }        
     }
-       
-    return 1;
+    }
 }

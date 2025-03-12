@@ -57,11 +57,6 @@ int main()
    }
     while (t <= numquestions)
     {
-        if (t == NULL)
-        {
-            pritnf("test");
-            break;
-        }
         getinpt(file);
 
         printf("question: %s", question);
@@ -81,13 +76,13 @@ int main()
                 score--;
 
             }
-    if { t == numquestions }
+    if ( t == numquestions )
         {
             printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);
             printf("Would you like to play again? (y/n)\n");
             char playagain;
             scanf("%c", &playagain);
-            if (playagain == "y")
+            if ( strcmp(playagain,"y") ==0)
             {
                 score = 0;
             }

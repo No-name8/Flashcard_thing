@@ -16,7 +16,7 @@ jobs:
         - name: compiler install
           run: sudo apt install gcc
         - name: compile
-          run: gcc -Wall -wextra -o Flashcard_thing Flashcard_thing-0.1.1.c
+          run: gcc -Wall -Wextra -o Flashcard_thing Flashcard_thing-0.1.1.c
         - name: run program
           run: ./Flashcard_thing
           

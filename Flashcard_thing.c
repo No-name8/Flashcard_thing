@@ -50,7 +50,7 @@ int main()
     printf("How many questions would you like to answer?\n");
     scanf("%d", &numquestions);
     FILE *file = fopen("name.txt", "r");
-   if ((file == NULL)) 
+   if (file == NULL) 
    {
     perror("FILE does not exist"); 
     return 1;

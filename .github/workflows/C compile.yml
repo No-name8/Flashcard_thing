@@ -18,13 +18,7 @@ jobs:
         - name: compile
           run: gcc -Wall -Wextra -o Flashcard_thing Flashcard_thing-0.1.1.c
         - name: run program
-          run: ./Flashcard_thing
-        - name: echo num
-          run: echo ("20")
-        - name: echo file
-          run: echo ("name.txt")
-        - name: echo answ
-          run: echo ("test succeed")
+          run: ./Flashcard_thing | echo -e "20" | echo -e "name.txt" | echo -e test two
           
           
           

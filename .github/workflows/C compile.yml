@@ -1,1 +1,17 @@
+name: C compile
 
+on: 
+  push: 
+    branches: [ "test" ] 
+  pull_request:
+    branches: [ "test" ] 
+  
+jobs: 
+    build: 
+
+      runs-on: debian-latest  
+
+      steps: 
+        - uses: actions/checkout@v4 
+        - name: compile 
+          run: 

@@ -13,5 +13,7 @@ jobs:
 
       steps: 
         - uses: actions/checkout@v4 
-        - name: compile 
-          run: 
+        - name: compiler install
+          run: sudo apt install gcc
+        - name: compile
+            run: gcc 

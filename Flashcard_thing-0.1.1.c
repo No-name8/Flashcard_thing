@@ -24,29 +24,32 @@ char getinpt(FILE *file)
 
             if ( q == 0)
             {
-                q++;
+                q = strlen(fout);
+                question = malloc(sizof(fout));
             }
             else if (a == 0)
             {
-                a++;
+                a = strlen(fout);
+                answr = malloc(sizof(fout));
             }
-            else if ( ua == 0)
-            {
-                ua++; 
-            }
+
 
                   
         } while( fout != '\n' || fout != EOF);
         
         if(i % 2)
         {
+            a = strlen(fout);
+            answr =realloc(answr, sizof(a));
             answr = fout;
-            a++;
+            
         } 
         else
         {
+            q = strlen(fout);
+            question = realloc(question, sizeof(fout+q));
             question = fout; 
-            q++; 
+            
         }
         i++;
     } while(i <= numquestions);
@@ -79,7 +82,26 @@ int main()
 
     printf("question: %s", question);
 
+    strcmp(question, answr);
+
+    switch(strcmp(question, answr))
+    {
+        case 0:
+            ua = strlen(answr);
+            usransw = malloc(sizeof(ua));
+            break;
+        case >0:
+            ua = strlen(question);
+            usransw = malloc(sizeof(ua));
+            break;
+        case <0:
+            ua = strlen(answr);
+            usransw = malloc(sizeof(ua));
+            break; 
+    }
+
     scanf("%s", &usransw);
+    
 
     if (strcmp(answr, usransw) == 0)
     {

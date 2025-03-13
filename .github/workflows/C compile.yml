@@ -2,9 +2,9 @@ name: C compile
 
 on: 
   push: 
-    branches: [ "test_2" ] 
+    branches: [ "main" ] 
   pull_request:
-    branches: [ "test_2" ] 
+    branches: [ "main" ] 
   
 jobs: 
     build: 

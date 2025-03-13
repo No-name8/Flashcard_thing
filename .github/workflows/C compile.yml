@@ -1,0 +1,24 @@
+name: C compile
+
+on: 
+  push: 
+    branches: [ "main" ] 
+  pull_request:
+    branches: [ "main" ] 
+  
+jobs: 
+    build: 
+
+      runs-on: ubuntu-latest  
+
+      steps: 
+        - uses: actions/checkout@v4 
+        - name: compiler install
+          run: sudo apt install gcc
+        - name: compile
+          run: gcc -Wall -Wextra -o Flashcard_thing Flashcard_thing-0.1.1.c
+        - name: run program
+          run: ./Flashcard_thing | echo -e "20" | echo -e "name.txt" | echo -e test two
+          
+          
+          

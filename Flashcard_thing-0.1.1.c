@@ -2,13 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-char question[64];
-char answr[64]; 
-char usransw[64];
+char question[];
+char answr[]; 
+char usransw[];
 int i = 0; //Preserves the variable i so it can be used throughout the code. 
 int score = 0;
 int numquestions;
-char filename[64];
+char filename[];
 
 // takes questions from file
 char getinpt(FILE *file)

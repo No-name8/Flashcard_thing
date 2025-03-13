@@ -47,7 +47,7 @@ char getinpt(FILE *file)
         else
         {
             q = strlen(fout);
-            question = realloc(question, sizeof(fout+q));
+            question = realloc(question, sizeof(q));
             question = fout; 
             
         }

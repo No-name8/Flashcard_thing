@@ -124,6 +124,10 @@ int main()
         if ((playagain == "y"))
         {
             score = 0;
+            free (question);
+            free (answr);
+            free (usransw);
+            i = 0;
         }
         else
         {

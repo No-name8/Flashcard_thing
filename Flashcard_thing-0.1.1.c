@@ -64,11 +64,13 @@ int main()
     fgets(buffer, sizeof(buffer), stdin);
     numquestions = strtol(buffer, NULL, 10);
 
-    while (getchar() != '\n');
+    fflush(stdin);
 
     printf("Enter the name of the file for questions\n");
-    scanf("%s", &filename);
-      
+    scanf("%s", filename);
+    
+    fflush(stdin);
+
     FILE *file = fopen( filename, "r");
    
    if (file == NULL) 
@@ -86,19 +88,28 @@ int main()
 
             if ( strcmp( answr, question) < 0)
                 {
-                usransw = malloc(sizeof(answr));
+                usransw = malloc(100);
                 }    
                 else if ( strcmp( answr, question) > 0)
                 { 
-                usransw = malloc(sizeof(question));
+                usransw = malloc(100);
                 }    
                 else
                 {
-                usransw = malloc(sizeof(answr));
+                usransw = malloc(100);
                 }
 
-                fgets(usransw, sizeof(usransw), stdin);
+                fflush(stdin);
 
+                printf("Please enter an answer:"); 
+                fgets(usransw, strlen(answr), stdin);
+
+                if (usransw == NULL || usransw == "\n")
+                {
+                    printf("Please enter an answer:");
+                    fgets(usransw, strlen(answr), stdin);
+                } 
+                  
                 if (strcmp(answr, usransw) == 0)
                 {
                 printf("Correct\n");
@@ -109,8 +120,10 @@ int main()
                 printf("Incorrect\n");
         // mark as incorrect somehow       
                 printf("answer: %s", answr);
+                printf("your answer: %s", usransw);
                 score--;
                 }
+                fflush(stdin);
         }
     
     

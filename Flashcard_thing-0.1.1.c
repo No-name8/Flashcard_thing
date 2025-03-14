@@ -11,7 +11,7 @@ int i = 0; //Preserves the variable i so it can be used throughout the code.
 int score = 0;
 int nq;
 char filename[20];
-char review[2][]
+double ***review;
 
 // takes questions from file
 char getinpt(FILE *file)
@@ -50,7 +50,8 @@ do {
         return 1;
     
 }
-// give questions to user
+
+
 
 // if true mark as learned
 
@@ -65,12 +66,7 @@ int main()
     fgets(buffer, sizeof(buffer), stdin);
     nq = strtol(buffer, NULL, 10);
 
-    int **review = malloc(sizeof(int) * 2);
 
-`   for (int j =0; j < nq; j++)
-    {
-        review[j] = malloc(sizeof(int) *2);
-    }
 
     fflush(stdin);
 
@@ -119,12 +115,29 @@ int main()
                     printf("Please enter an answer:");
                     fgets(usransw, strlen(answr), stdin);
                 } 
+
+                    char ***review = malloc(sizeof(int) * 3);
+
+`           for (int j =0; j < nq; j++)
+            {
+                **review[j] = malloc(sizeof(int) *3);
+        
+                for (int k = 0; k < nq; k++)
+                {
+                    *review[k] = malloc(sizeof(int) * 3);
+
+                    for (int l = 0; l < nq; l++)
+                    {
+                        review[l] = malloc(strlen(answr) * 3);
+                    }
+                }
+            }
                   
                 if (strcmp(answr, usransw) == 0)
                 {
                 printf("Correct\n");
                 score++; 
-                
+
                 }
                 else
                 {

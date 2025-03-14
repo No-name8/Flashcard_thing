@@ -28,19 +28,23 @@ do {
             }
         
         
-                if ( i % 2 != 0)
+                if ( i % 2 )
                 {
                     question = malloc(strlen(fout) + 1);
                     strcpy(question, fout);
+                    i++;
+                    break;
                 }
                 else 
                 {
                     answr = malloc(strlen(fout) + 1);
                     strcpy(answr, fout);
+                    i++;
                 }
-            }   
-            } while( *fout != '\n' && *fout != EOF);
-        i++; 
+            }
+
+            } while( *fout != '\n' || *fout != EOF);
+        
         free(fout);   
         return 1;
     
@@ -63,10 +67,9 @@ int main()
     while (getchar() != '\n');
 
     printf("Enter the name of the file for questions\n");
-    scanf("%s", filename);
-    filename[strcspn(filename, "\n")] = 0;
-    
-    FILE *file = fopen( "name.txt", "r");
+    scanf("%s", &filename);
+      
+    FILE *file = fopen( filename, "r");
    
    if (file == NULL) 
         {
@@ -93,22 +96,26 @@ int main()
                 {
                 usransw = malloc(sizeof(answr));
                 }
+
+                fgets(usransw, sizeof(usransw), stdin);
+
+                if (strcmp(answr, usransw) == 0)
+                {
+                printf("Correct\n");
+                score++; 
+                }
+                else
+                {
+                printf("Incorrect\n");
+        // mark as incorrect somehow       
+                printf("answer: %s", answr);
+                score--;
+                }
         }
-    scanf("%s", usransw);
+    
     
 
-    if (strcmp(answr, usransw) == 0)
-        {
-            printf("Correct\n");
-            score++; 
-        }
-    else
-        {
-            printf("Incorrect\n");
-        // mark as incorrect somehow       
-            printf("answer: %s", answr);
-            score--;
-        }
+    
     if (score == numquestions )
         {
             printf("Congratulations on finishing you scored: %d out of %d", score, numquestions);

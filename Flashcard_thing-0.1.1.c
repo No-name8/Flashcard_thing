@@ -9,8 +9,9 @@ char *answr;
 char *usransw;
 int i = 0; //Preserves the variable i so it can be used throughout the code. 
 int score = 0;
-int numquestions;
+int nq;
 char filename[20];
+char review[2][]
 
 // takes questions from file
 char getinpt(FILE *file)
@@ -62,7 +63,14 @@ int main()
     printf("welcome to Flashcard Thing\n");
     printf("How many questions would you like to answer?\n");
     fgets(buffer, sizeof(buffer), stdin);
-    numquestions = strtol(buffer, NULL, 10);
+    nq = strtol(buffer, NULL, 10);
+
+    int **review = malloc(sizeof(int) * 2);
+
+`   for (int j =0; j < nq; j++)
+    {
+        review[j] = malloc(sizeof(int) *2);
+    }
 
     fflush(stdin);
 
@@ -104,6 +112,8 @@ int main()
                 printf("Please enter an answer:"); 
                 fgets(usransw, strlen(answr), stdin);
 
+                int n = 0; 
+
                 if (usransw == NULL || usransw == "\n")
                 {
                     printf("Please enter an answer:");
@@ -114,6 +124,7 @@ int main()
                 {
                 printf("Correct\n");
                 score++; 
+                
                 }
                 else
                 {

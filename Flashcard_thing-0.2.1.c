@@ -4,50 +4,60 @@
 #include <stdlib.h>
 
 // buffer keeps values and \n so either need to empty it, limit it to a smaller scope so it can be brand new every time, or use another var in its place
+// The above should be done 
 // Seems to be main problem so far with the 3d array
 int main()
 {
     int score = 0;
-    char *buffer = malloc(sizeof(char) * 3);
+    
     int attempted = 0;
-    bool *review = malloc(sizeof(bool) * 2); 
-    char *temp = malloc(sizeof(buffer) + 2);
+  
+    char *filename = malloc(sizeof(char)); 
+
 
     printf("Welcome to flashcard thing\n");
     
     do{
-    fgets(buffer, sizeof(buffer), stdin);
+        char *temp = malloc(sizeof(char) * 3);
 
-    strcat(temp, buffer);
+        char *buffer = malloc(sizeof(char) * 3);
 
-    if (strchr(buffer, '\n') != NULL)
-    {
-        buffer = realloc(buffer, sizeof(temp));
-        strcpy(buffer, temp);        
-    }
+        do{
+            fgets(buffer, sizeof(buffer), stdin);
+
+            strcat(temp, buffer);
+
+            if (strchr(buffer, '\n') != NULL)
+            {
+                buffer = realloc(buffer, sizeof(temp) +2);
+                temp = realloc(temp, sizeof(buffer) + 2);
+                strcpy(buffer, temp);        
+            }
 
 
-    } while( strchr(buffer, '\n') == NULL);
+        } while( strchr(buffer, '\n') == NULL);
     
     buffer[strlen(buffer) -1] = '\0';
-
-    char *filename = malloc(sizeof(buffer)); 
-
+    
+    filename = realloc(filename, sizeof(buffer));
+    
     strcpy(filename, buffer);
+    } while (filename == NULL); 
+
 
     printf("Please enter the number of questions you would like to answer\n");
 
     fflush;
+    
+    int nq = 0;
 
-    fgets(buffer, sizeof(buffer), stdin);
+    fgets(nq, sizeof(nq), stdin);
 
-    if(buffer <= 0)
+    if(nq <= 1)
     {
         perror("Invalid input");
         exit;
     }
-
-    int nq = strtol(buffer, NULL, 10 );
 
     FILE *file = fopen( filename, "r");
 
@@ -72,6 +82,7 @@ int main()
 
     do
     {
+    char *buffer = malloc (sizeof(char) *3);
     char *temp = malloc(sizeof(buffer) * 2);
 
     fgets(buffer, sizeof(buffer), file); // not working for some reason
@@ -86,6 +97,8 @@ int main()
         }
         else 
         {
+            buffer[strlen(buffer) - 1] = '\0'; 
+
             for (int i =0; i <= nq; i++){
                 for (int j = 0; j <= 2; j++)
                 {
@@ -102,59 +115,61 @@ int main()
     
     }while( increment <= nq );
 
+    bool *review = malloc(sizeof(bool) * 2);
+
     for (int i = 0; i <= nq; i++)
     {
         review[i] = malloc(sizeof(bool) * 2);
     }
 
     do{
-    int min = 0;
-    unsigned int i = rand() <= nq; 
-    int j =0;
-    char *useranswer = malloc(sizeof(char) * 3);
+        int min = 0;
+        unsigned int i = rand() <= nq; 
+        int j = 0;
+        char *useranswer = malloc(sizeof(char) * 3);
 
-    buffer = realloc(buffer, sizeof(char) * 3);
+        char *buffer = malloc(sizeof(char) * 3);
 
-    printf("%s", questions[i][j]);
+        printf("%s", questions[i][j]);
 
-    printf("\nplease enter an answer\n");
+        printf("\nplease enter an answer\n");
 
-    do
-    {
-    char *temp = malloc(sizeof(buffer) * 2);
-
-    fgets(buffer, sizeof(buffer), file);
-
-        if (strchr(buffer, '\n') == NULL)
+        do
         {
-            strcat(temp, buffer);
+            char *temp = malloc(sizeof(buffer) * 2);
 
-            buffer = realloc(buffer, sizeof(buffer) + 2);
+            fgets(buffer, sizeof(buffer), file);
 
-            strcpy(buffer, temp); 
+            if (strchr(buffer, '\n') == NULL)
+            {
+                strcat(temp, buffer);
+
+                buffer = realloc(buffer, sizeof(buffer) + 2);
+
+                strcpy(buffer, temp); 
+            }
+            else
+            {
+                strcpy(useranswer, buffer); 
+            }
+        }while(useranswer == NULL);
+
+        if (strcmp(useranswer, questions[i][j]) == 0)
+        {
+            printf("correct\n");
+            score++;
         }
         else
         {
-            strcpy(useranswer, buffer); 
+            printf("Incorrect\n");
+            printf("%d", questions[i][j]);
+            review[i] = true; 
+
         }
-    }while(useranswer == NULL);
 
-    if (strcmp(useranswer, questions[i][j]) == 0)
-    {
-        printf("correct\n");
-        score++;
-    }
-    else
-    {
-        printf("Incorrect\n");
-        printf("%d", questions[i][j]);
-        review[i] = true; 
-
-    }
-
-    i++;
-    j++; 
-    attempted++;
+        i++;
+        j++; 
+        attempted++;
     }
     while( attempted <= nq);
 

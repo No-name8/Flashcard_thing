@@ -77,6 +77,11 @@ int main()
         printf("File does not exist");
         exit;
     }
+    if ( file == NULL )
+    {
+      perror("file does not exist");
+      exit(0);
+    } // should check if file is working 
     
     int increment = 0;
 
@@ -86,7 +91,7 @@ int main()
     char *temp = malloc(sizeof(buffer) * 2);
 
     fgets(buffer, sizeof(buffer), file); // not working for some reason
-
+// not getting any values odds are its a result of something wrong eith *file
         if (strchr(buffer, '\n') == NULL)
         {
             strcat(temp, buffer);

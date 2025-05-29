@@ -3,9 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-// buffer keeps values and \n so either need to empty it, limit it to a smaller scope so it can be brand new every time, or use another var in its place
-// The above should be done 
-// Seems to be main problem so far with the 3d array
+// fuck 3d arrays im just going tk use a sql db. 
+
 int main()
 {
     int score = 0;

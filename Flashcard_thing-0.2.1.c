@@ -37,7 +37,7 @@ int main()
 
             if (strchr(buffer, '\n') != NULL)
             {
-                buffer = realloc(buffer, sizeof(temp) +2);
+                buffer = realloc(buffer, sizeof(temp) + 2);
                 temp = realloc(temp, sizeof(buffer) + 2);
                 strcpy(buffer, temp);        
             }

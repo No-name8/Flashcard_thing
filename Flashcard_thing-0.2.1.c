@@ -2,11 +2,20 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stqlite3.h>
+
 
 // fuck 3d arrays im just going tk use a sql db. 
 
+
+
 int main()
 {
+
+    sqlite3 *db;
+
+    sqlite3_stmt *stmt;
+
     int score = 0;
     
     int attempted = 0;
@@ -36,11 +45,11 @@ int main()
 
         } while( strchr(buffer, '\n') == NULL);
     
-    buffer[strlen(buffer) -1] = '\0';
+        buffer[strlen(buffer) -1] = '\0';
     
-    filename = realloc(filename, sizeof(buffer));
+        filename = realloc(filename, sizeof(buffer));
     
-    strcpy(filename, buffer);
+        strcpy(filename, buffer);
     } while (filename == NULL); 
 
 
@@ -58,19 +67,6 @@ int main()
         exit;
     }
 
-    FILE *file = fopen( filename, "r");
-
-    char ***questions = malloc(sizeof(char) * 3);
-
-    for (int i = 0; i <= nq; i++)
-    {
-        questions[i] = malloc(sizeof(char) * 3);
-        for (int j = 0; j <= nq; j++)
-        {
-            questions[i][j] = malloc(sizeof(char) * 3);
-        }
-    }
-
     if (filename == NULL)
     {
         printf("File does not exist");
@@ -81,58 +77,25 @@ int main()
       perror("file does not exist");
       exit(0);
     } // should check if file is working 
+
+    // sqlite db stuff here 
+
+    int rc = sqlite3_open(filename, &db);
     
-    int increment = 0;
-
-    do
-    {
-    char *buffer = malloc (sizeof(char) *3);
-    char *temp = malloc(sizeof(buffer) * 2);
-
-    fgets(buffer, sizeof(buffer), file); // not working for some reason
-// not getting any values odds are its a result of something wrong eith *file
-        if (strchr(buffer, '\n') == NULL)
-        {
-            strcat(temp, buffer);
-
-            buffer = realloc(buffer, sizeof(buffer) + 2);
-
-            strcpy(buffer, temp); 
-        }
-        else 
-        {
-            buffer[strlen(buffer) - 1] = '\0'; 
-
-            for (int i =0; i <= nq; i++){
-                for (int j = 0; j <= 2; j++)
-                {
-                    for (int k = 0; k <= strlen(buffer); k++)
-                    {
-                        questions[i][j][k] = *buffer; // seg fault occuring after a number of iterations 
-                    }
-                }
-            }
-            increment++;
-        }
-
-    
-    
-    }while( increment <= nq );
-
-    bool *review = malloc(sizeof(bool) * 2);
-
-    for (int i = 0; i <= nq; i++)
-    {
-        review[i] = malloc(sizeof(bool) * 2);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "cannot open database: %s\n", sqlite3_errmsg(open_db));
+        exit(1);
     }
+    test = sqlite3_prepare_v2(filename, "SELECT question FROM flashcards WHERE id = ?", -1, &test_stmt, NULL);
+    if (test != SQLITE_OK){
+        fprintf(stderr, "SQL error; %s\n", sqlite3_errmsg(db));
+        test = sqlite3_prepare_v2(filename, "SELECT question FROM flashcards WHERE id = ?", -1, &test_stmt, NULL);
+        sqlite3_close(db);
+        exit(1);
+    }
+    sqlite3_bind_int(test_stmt, 1, )
 
     do{
-        int min = 0;
-        unsigned int i = rand() <= nq; 
-        int j = 0;
-        char *useranswer = malloc(sizeof(char) * 3);
-
-        char *buffer = malloc(sizeof(char) * 3);
 
         printf("%s", questions[i][j]);
 
@@ -179,3 +142,5 @@ int main()
 
     return(0);
 }
+
+sqlite3_open(const char *filename, sqlite3 **ppDb)

@@ -22,24 +22,34 @@ int main()
   
     char *filename = malloc(sizeof(char)); 
 
+    // declaring variables 
 
     printf("Welcome to flashcard thing\n");
+    
+    // determines the name of the database
+    
+    printf("Please enter the file name in the format name.db\n");
     
     do{
         char *temp = malloc(sizeof(char) * 3);
 
         char *buffer = malloc(sizeof(char) * 3);
-
+        
+        // allocating sizes of memory equal to the size of a char + 3 bytes 
+      
         do{
             fgets(buffer, sizeof(buffer), stdin);
-
+          
+          // reads from standard input and enters the values into the variable buffer
+          
             strcat(temp, buffer);
 
             if (strchr(buffer, '\n') != NULL)
             {
                 buffer = realloc(buffer, sizeof(temp) + 2);
                 temp = realloc(temp, sizeof(buffer) + 2);
-                strcpy(buffer, temp);        
+                strcpy(buffer, temp);
+                // checks if a new line character is in the input       
             }
 
 
@@ -48,7 +58,7 @@ int main()
         buffer[strlen(buffer) -1] = '\0';
     
         filename = realloc(filename, sizeof(buffer));
-    
+        // once the newline charachter is found it removes one bit if memory and replaces it with a null terminator
         strcpy(filename, buffer);
     } while (filename == NULL); 
 

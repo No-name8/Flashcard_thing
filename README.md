@@ -1,0 +1,1 @@
+A local quiz or flashcard thing I have decided to make to become more familiar with C and github. It is not done and still doesn't quailify as functioning. I would like to add a GUI eventually but that is still a ways away. 

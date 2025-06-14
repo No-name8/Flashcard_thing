@@ -1,27 +1,27 @@
 name: C compile
 
-on: 
-  push: 
-    branches: [ "main" ] 
+on:
+  push:
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ] 
-  
-jobs: 
-    build: 
-      permissions: 
+    branches: [ "main" ]
+
+jobs:
+    build:
+      permissions:
         contents: read
-        pull-requests: read 
+        pull-requests: read
 
-      runs-on: ubuntu-latest  
+      runs-on: ubuntu-latest
 
-      steps: 
-        - uses: actions/checkout@v4 
+      steps:
+        - uses: actions/checkout@v4
         - name: compiler install
-          run: sudo apt install gcc
+          run: sudo apt install gcc && sudo apt install valgrind
         - name: compile
-          run: gcc -Wall -Wextra -o Flashcard_thing Flashcard_thing-0.1.1.c
-        - name: run program
-          run: ./Flashcard_thing | echo -e "20" | echo -e "name.txt" | echo -e test two
-          
-          
-          
+          run: gcc -Wall -Wextra -Wpedantic Flashcard_thing-0.5.c -o Flashcard_thing
+        - name: valgrind
+          run: valgrind ./Flashcard_thing
+
+
+

@@ -39,6 +39,7 @@ int main()
     int attempted = 0;
 
     var.question = '\0';
+    var.answer = '\0';
 
     printf("Welcome to Flashcard_Thing\n");
 
@@ -57,7 +58,7 @@ int main()
         }
         else if (strchr(buffer, '\n') != NULL)
         {
-            buffer[strlen(buffer)] = '\0';
+            buffer[strlen(buffer) - 1] = '\0';
         }
 
         filename = realloc(filename, strlen(buffer) + 1);
@@ -70,8 +71,8 @@ int main()
     } while (filename == NULL);
     if ( strlen(filename ) <= 2)
     {
-        filename = realloc(filename, 11);
-        filename = "flashcard.db";
+        filename = realloc(filename, 13);
+        strcpy(filename, "flashcard.db");
     }
 
 
@@ -114,7 +115,15 @@ int main()
         free(buffer);
     }
 
-    free(filename); // Invalid free() / delete / delete[] / realloc()
+    if ( var.question)
+    {
+    free(var.question);
+    }
+    if (var.answer)
+    {
+    free(var.answer);
+    }
+    free(filename);
 
     return 1;
 }
@@ -122,6 +131,8 @@ int main()
 bool check_status_of_db(char *filename, int nq)
 {
     sqlite3 *db;
+
+    sqlite3_stmt *stmt;
 
     int rc;
 
@@ -137,16 +148,40 @@ bool check_status_of_db(char *filename, int nq)
     }
     else
     {
-        int last = sqlite3_last_insert_rowid(db);
+        const char *last = "SELECT id FROM flashcard";
+        const char *create = "CREATE TABLE IF NOT EXISTS flashcard(id INT PRIMARY KEY, question TEXT, answer TEXT)";
 
-        if ( last < nq )
+        rc = sqlite3_prepare_v2(db, last, -1, &stmt, NULL);
+
+        if (rc != SQLITE_OK)
         {
+            rc = sqlite3_prepare_v2(db, create, -1, &stmt, NULL );
+            if (rc != SQLITE_OK)
+            {
+            fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+            sqlite3_close(db);
+
+            exit(1);
+            }
+        }
+
+        rc = sqlite3_step(stmt);
+
+        if ( rc <= nq )
+        {
+            rc = sqlite3_finalize(stmt);
+
             return false;
         }
         else
         {
+            rc = sqlite3_finalize(stmt);
+
             return true;
         }
+
+        sqlite3_close(db);
+
     }
 
 
@@ -189,7 +224,7 @@ int read_data(char *filename, void *structs )
         exit(1);
     }
 
-    sqlite3_close(db);
+    // sqlite3_close(db);
 
     return 1;
 }
@@ -227,18 +262,21 @@ int callback(void *data, int argc, char **argv, char **azColName)
 
     if (strcmp(azColName[var->count], "id") == 0)
     {
+        var->id = '\0';
         var->id = atoi(argv[var->count]);
         var->count++;
     }
     else if (strcmp(azColName[var->count], "answer") == 0)
     {
         var->answer = malloc(strlen(argv[var->count]) + 1);
+        var->answer = '\0';
         strcpy(var->answer, argv[var->count]);
         var->count++;
     }
     else if (strcmp(azColName[var->count], "question") == 0)
     {
         var->question = malloc(strlen(argv[var->count]) + 1);
+        var->question[0] = '\0';
         strcpy(var->question, argv[var->count]);
         var->count++;
     }
@@ -293,15 +331,15 @@ int answer(void *data, int nq, int score, int attempted, char *filename)
 
     char *useranswer = malloc(256);
 
+    useranswer[0] = '\0';
+
     read_data(filename, &var);
-                                        // these errrors only come about if nq exceeds the total number of values in the db i think
-    printf("%s", var->question); // Conditional jump or move depends on uninitialised value(s)
+
+    printf("%s", var->question);
 
     fgets(useranswer, 256, stdin);
 
-    if (strcmp(useranswer, var->answer) == 0) // Use of uninitialised value of size 8
-        // Invalid read of size 1
-        //  Access not within mapped region at address 0x0 (SIGSEGV)
+    if (strcmp(useranswer, var->answer) == 0) // Invalid read of size 1
     {
         printf("\nCorrect\n");
         mark_as_learned(filename, &var);
@@ -331,6 +369,14 @@ int insert_data(char *filename, int nq)
 
     int id = sqlite3_last_insert_rowid(db) + 1;
 
+    char *answer = malloc(256);
+
+    char *question = malloc(256);
+
+    answer[0] = '\0';
+
+    question[0] = '\0';
+
     if (rc != SQLITE_OK)
     {
         fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
@@ -345,21 +391,13 @@ int insert_data(char *filename, int nq)
 
         sqlite3_bind_int(stmt, 1, id);
 
-        char *answer = malloc(256);
-
-        char *question = malloc(256);
-
-        answer[0] = '\0';
-
-        question[0] = '\0';
-
         printf("please enter the question\n");
 
         fgets(question, 256, stdin);
 
         printf("please enter the answer\n");
 
-        fgets(question,256, stdin);
+        fgets(answer, 256, stdin);
 
         sqlite3_bind_text(stmt, 2, answer, -1, SQLITE_STATIC);
 
@@ -369,13 +407,17 @@ int insert_data(char *filename, int nq)
 
         sqlite3_reset(stmt);
 
-        free(answer);
-        free(question);
-    } while (nq < id);
+        printf("%d", id);
+
+        id++;
+    } while (nq >= id);
 
     sqlite3_finalize(stmt);
 
     sqlite3_close(db);
+
+    free(answer);
+    free(question);
 
     return 1;
 }

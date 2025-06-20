@@ -38,8 +38,9 @@ int main()
 
     int attempted = 0;
 
-    var.question = '\0';
-    var.answer = '\0';
+    var.question = NULL;
+    var.answer = NULL;
+    var.count = 0;
 
     printf("Welcome to Flashcard_Thing\n");
 
@@ -114,15 +115,13 @@ int main()
 
         free(buffer);
     }
+    if(check_status_of_db(filename, nq) == true)
+    {
+        for ( int i = 0; i < nq; i++){
+        answer(&var, nq, score, attempted, filename);
+        }
+    }
 
-    if ( var.question)
-    {
-    free(var.question);
-    }
-    if (var.answer)
-    {
-    free(var.answer);
-    }
     free(filename);
 
     return 1;
@@ -149,20 +148,15 @@ bool check_status_of_db(char *filename, int nq)
     else
     {
         const char *last = "SELECT id FROM flashcard";
-        const char *create = "CREATE TABLE IF NOT EXISTS flashcard(id INT PRIMARY KEY, question TEXT, answer TEXT)";
+       
 
         rc = sqlite3_prepare_v2(db, last, -1, &stmt, NULL);
 
         if (rc != SQLITE_OK)
         {
-            rc = sqlite3_prepare_v2(db, create, -1, &stmt, NULL );
-            if (rc != SQLITE_OK)
-            {
-            fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+           // fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
             sqlite3_close(db);
-
-            exit(1);
-            }
+            return false; 
         }
 
         rc = sqlite3_step(stmt);
@@ -193,6 +187,8 @@ int read_data(char *filename, void *structs )
 {
     sqlite3 *db;
 
+    sqlite3_stmt *stmt;
+
     char *errmsg;
 
     Variables *var = (Variables *) structs;
@@ -209,13 +205,15 @@ int read_data(char *filename, void *structs )
 
         exit(1);
     }
-    const char *read = "SELECT id, question, answer FROM flashcard";
+    const char *read = "SELECT id, question, answer FROM flashcard LIMIT 1;";
 
-    int exec;
+    rc = sqlite3_prepare_v2(db, read, -1, &stmt, NULL);
 
-    exec = sqlite3_exec(db, read, callback, &var, &errmsg);
+    rc = sqlite3_step(&stmt);
 
-    if ( exec != SQLITE_OK )
+    // get col names using sql function then compare and then assign variables
+
+    if ( rc != SQLITE_OK )
     {
         fprintf(stderr, "ERROR: %s", errmsg);
 
@@ -224,7 +222,11 @@ int read_data(char *filename, void *structs )
         exit(1);
     }
 
-    // sqlite3_close(db);
+    rc = sqlite3_close(db);
+    if (rc != SQLITE_OK)
+    {
+        fprintf(stderr, "ERROR: %s", errmsg);
+    }
 
     return 1;
 }
@@ -237,7 +239,7 @@ int mark_as_learned(char *filename, void *data)
 
     Variables *var = (Variables *) data;
 
-    const char *mark = "UPDATE flashcard SET review + 1 WHERE id = ?";
+    const char *mark = "UPDATE flashcard SET review = review + 1 WHERE id = ?";
 
     sqlite3_open(filename, &db);
 
@@ -254,43 +256,11 @@ int mark_as_learned(char *filename, void *data)
     return 1;
 }
 
-int callback(void *data, int argc, char **argv, char **azColName)
-{
-    Variables *var = (Variables *) data;
-
-    var->count = 0;
-
-    if (strcmp(azColName[var->count], "id") == 0)
-    {
-        var->id = '\0';
-        var->id = atoi(argv[var->count]);
-        var->count++;
-    }
-    else if (strcmp(azColName[var->count], "answer") == 0)
-    {
-        var->answer = malloc(strlen(argv[var->count]) + 1);
-        var->answer = '\0';
-        strcpy(var->answer, argv[var->count]);
-        var->count++;
-    }
-    else if (strcmp(azColName[var->count], "question") == 0)
-    {
-        var->question = malloc(strlen(argv[var->count]) + 1);
-        var->question[0] = '\0';
-        strcpy(var->question, argv[var->count]);
-        var->count++;
-    }
-
-    return 0;
-}
-
 int create_table(char *filename)
 {
     sqlite3 *db;
 
     sqlite3_stmt *stmt;
-
-
 
     int rc = sqlite3_open(filename, &db);
 
@@ -304,7 +274,7 @@ int create_table(char *filename)
 
     }
 
-    const char *create = "CREATE TABLE IF NOT EXISTS flashcard(id INT PRIMARY KEY, question TEXT, answer TEXT)";
+    const char *create = "CREATE TABLE IF NOT EXISTS flashcard(id INT PRIMARY KEY, question TEXT, answer TEXT, review INT)";
 
     rc = sqlite3_prepare_v2(db, create, -1, &stmt, NULL);
     if ( rc != SQLITE_OK )
@@ -331,13 +301,16 @@ int answer(void *data, int nq, int score, int attempted, char *filename)
 
     char *useranswer = malloc(256);
 
-    useranswer[0] = '\0';
-
+    while (attempted < nq)
+    {
+    
     read_data(filename, &var);
 
-    printf("%s", var->question);
+    printf("%s", var->question); // Use of uninitialised value of size 8 // Invalid read of size 1
 
     fgets(useranswer, 256, stdin);
+
+        useranswer[strcspn(useranswer, "\n")] = '\0';
 
     if (strcmp(useranswer, var->answer) == 0) // Invalid read of size 1
     {
@@ -353,6 +326,8 @@ int answer(void *data, int nq, int score, int attempted, char *filename)
 
     printf("Correct answer was: %s", var->answer);
 
+    
+    }
     attempted++;
     }
     free(useranswer);
@@ -367,7 +342,7 @@ int insert_data(char *filename, int nq)
 
     int rc = sqlite3_open(filename, &db);
 
-    int id = sqlite3_last_insert_rowid(db) + 1;
+    int id = 1;
 
     char *answer = malloc(256);
 
@@ -406,8 +381,6 @@ int insert_data(char *filename, int nq)
         rc = sqlite3_step(stmt);
 
         sqlite3_reset(stmt);
-
-        printf("%d", id);
 
         id++;
     } while (nq >= id);

@@ -70,7 +70,7 @@ int main()
         free(buffer);
 
     } while (filename == NULL);
-    if ( strlen(filename ) <= 2)
+    if ( strlen(filename ) <= 3)
     {
         filename = realloc(filename, 13);
         strcpy(filename, "flashcard.db");
@@ -135,11 +135,11 @@ bool check_status_of_db(char *filename, int nq)
 
     int rc;
 
-    rc = sqlite3_open(filename, &db);
+    rc = sqlite3_open(filename, &db); // 848 bytes in 1 blocks are definitely lost in loss record 228 of 228
 
     if ( rc != SQLITE_OK)
     {
-        fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR 142: %s", sqlite3_errmsg(db));
 
         sqlite3_close(db);
 
@@ -148,7 +148,7 @@ bool check_status_of_db(char *filename, int nq)
     else
     {
         const char *last = "SELECT id FROM flashcard";
-       
+
 
         rc = sqlite3_prepare_v2(db, last, -1, &stmt, NULL);
 
@@ -156,7 +156,7 @@ bool check_status_of_db(char *filename, int nq)
         {
            // fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
             sqlite3_close(db);
-            return false; 
+            return false;
         }
 
         rc = sqlite3_step(stmt);
@@ -178,7 +178,6 @@ bool check_status_of_db(char *filename, int nq)
 
     }
 
-
     sqlite3_close(db);
     return false;
 }
@@ -189,8 +188,6 @@ int read_data(char *filename, void *structs )
 
     sqlite3_stmt *stmt;
 
-    char *errmsg;
-
     Variables *var = (Variables *) structs;
 
     int rc;
@@ -199,33 +196,45 @@ int read_data(char *filename, void *structs )
 
     if (rc != SQLITE_OK )
     {
-        fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR 200: %s", sqlite3_errmsg(db));
 
         sqlite3_close(db);
 
-        exit(1);
+        exit(311);
     }
     const char *read = "SELECT id, question, answer FROM flashcard LIMIT 1;";
 
     rc = sqlite3_prepare_v2(db, read, -1, &stmt, NULL);
 
-    rc = sqlite3_step(&stmt);
-
-    // get col names using sql function then compare and then assign variables
-
     if ( rc != SQLITE_OK )
     {
-        fprintf(stderr, "ERROR: %s", errmsg);
+        fprintf(stderr, "ERROR 212: %s", sqlite3_errmsg(db));
 
         sqlite3_close(db);
 
-        exit(1);
+        exit(321);
+    }
+
+    rc = sqlite3_step(stmt);
+
+    // get col names using sql function then compare and then assign variables
+    // create var like azColName
+    //create var like argv
+    //then compare and go from there
+
+    if ( rc != SQLITE_OK )
+    {
+        fprintf(stderr, "ERROR 228: %s", sqlite3_errmsg(db)); // ERROR: another row available
+
+        sqlite3_close(db);
+
+        exit(331);
     }
 
     rc = sqlite3_close(db);
     if (rc != SQLITE_OK)
     {
-        fprintf(stderr, "ERROR: %s", errmsg);
+        fprintf(stderr, "ERROR 238: %s", sqlite3_errmsg(db));
     }
 
     return 1;
@@ -241,13 +250,42 @@ int mark_as_learned(char *filename, void *data)
 
     const char *mark = "UPDATE flashcard SET review = review + 1 WHERE id = ?";
 
-    sqlite3_open(filename, &db);
+    int rc;
+
+    rc = sqlite3_open(filename, &db);
+
+    if ( rc != SQLITE_OK )
+    {
+        fprintf(stderr, "ERROR 258: %s", sqlite3_errmsg(db));
+
+        sqlite3_close(db);
+
+        exit(312);
+    }
 
     sqlite3_prepare_v2(db, mark, -1, &stmt, NULL);
 
+    if ( rc != SQLITE_OK)
+    {
+        fprintf(stderr, "ERROR 271: %s", sqlite3_errmsg(db));
+
+        sqlite3_close(db);
+
+        exit(322);
+    }
+
     sqlite3_bind_int(stmt, 1, var->id);
 
-    sqlite3_step(stmt);
+    rc = sqlite3_step(stmt);
+
+    if ( rc != SQLITE_OK )
+    {
+        fprintf(stderr, "ERROR 284: %s", sqlite3_errmsg(db));
+
+        sqlite3_close(db);
+
+        exit(332);
+    }
 
     sqlite3_finalize(stmt);
 
@@ -266,11 +304,11 @@ int create_table(char *filename)
 
     if (rc != SQLITE_OK)
     {
-        fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR 308: %s", sqlite3_errmsg(db));
 
         sqlite3_close(db);
 
-        exit (1);
+        exit (313);
 
     }
 
@@ -279,14 +317,22 @@ int create_table(char *filename)
     rc = sqlite3_prepare_v2(db, create, -1, &stmt, NULL);
     if ( rc != SQLITE_OK )
     {
-        fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR 321: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
 
-        exit(1);
+        exit(323);
     }
 
     rc = sqlite3_step(stmt);
 
+    if ( rc != SQLITE_OK )
+    {
+        fprintf(stderr, "ERROR 331: %s", sqlite3_errmsg(db)); // ERROR 331: no more rows available
+
+        sqlite3_close(db);
+
+        exit(333);
+    }
     sqlite3_finalize(stmt);
 
     sqlite3_close(db);
@@ -303,7 +349,7 @@ int answer(void *data, int nq, int score, int attempted, char *filename)
 
     while (attempted < nq)
     {
-    
+
     read_data(filename, &var);
 
     printf("%s", var->question); // Use of uninitialised value of size 8 // Invalid read of size 1
@@ -326,7 +372,7 @@ int answer(void *data, int nq, int score, int attempted, char *filename)
 
     printf("Correct answer was: %s", var->answer);
 
-    
+
     }
     attempted++;
     }
@@ -354,15 +400,24 @@ int insert_data(char *filename, int nq)
 
     if (rc != SQLITE_OK)
     {
-        fprintf(stderr, "ERROR: %s", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR 358: %s", sqlite3_errmsg(db));
 
-        exit(1);
+        exit(314);
     }
     do
     {
-        const char *insert = "INSERT INTO flashcard( id, answer, question) VALUES(?, ?, ?)";
+        const char *insert = "INSERT INTO flashcard( id, answer, question, review) VALUES(?, ?, ?, 0)";
 
         rc = sqlite3_prepare_v2(db, insert, -1, &stmt, NULL);
+
+        if ( rc != SQLITE_OK)
+        {
+            fprintf(stderr, "ERROR 416 %d: %s", id, sqlite3_errmsg(db));
+
+            sqlite3_close(db);
+
+            exit(324);
+        }
 
         sqlite3_bind_int(stmt, 1, id);
 
@@ -370,9 +425,13 @@ int insert_data(char *filename, int nq)
 
         fgets(question, 256, stdin);
 
+        question[strlen(question) - 1] = '\0';
+
         printf("please enter the answer\n");
 
         fgets(answer, 256, stdin);
+
+        answer[strlen(answer) - 1] = '\0';
 
         sqlite3_bind_text(stmt, 2, answer, -1, SQLITE_STATIC);
 
@@ -380,6 +439,14 @@ int insert_data(char *filename, int nq)
 
         rc = sqlite3_step(stmt);
 
+        if ( rc != SQLITE_OK )
+        {
+            fprintf(stderr, "ERROR 445 %d: %s", id, sqlite3_errmsg(db));
+
+            sqlite3_close(db);
+
+            exit(334);
+        }
         sqlite3_reset(stmt);
 
         id++;

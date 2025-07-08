@@ -102,6 +102,16 @@ int main()
             {
                 printf("\nYou scored %d out of %d\n", score, nq);
             }
+            if (var.question)
+            {
+                free(var.question);
+                var.question = NULL;
+            }
+            if (var.answer)
+            {
+                free(var.answer);
+                var.answer = NULL;
+            }
         }
     }
     else
@@ -131,12 +141,26 @@ int main()
     {
         while (read_data(filename, &var) == 0 && attempted < nq)
         {
-            if (answer(&var) == 1)
+            if(answer(&var) == 1)
             {
                 mark_as_learned(filename, &var);
                 score++;
             }
             attempted++;
+            if (attempted == nq)
+            {
+                printf("\nYou scored %d out of %d\n", score, nq);
+            }
+            if (var.question)
+            {
+                free(var.question);
+                var.question = NULL;
+            }
+            if (var.answer)
+            {
+                free(var.answer);
+                var.answer = NULL;
+            }
         }
 
     }
@@ -286,6 +310,19 @@ int read_data(char *filename, void *structs )
     }
     else if(rc == SQLITE_DONE && sanity_check(filename) == 1 )
     {
+
+        if (var->question)
+        {
+            free(var->question);
+            var->question = NULL;
+        }
+
+        if (var->answer)
+        {
+            free(var->answer);
+            var->answer = NULL;
+        }
+
         sqlite3_finalize(stmt);
 
         sqlite3_close(db);
